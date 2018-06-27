@@ -1,0 +1,130 @@
+<div *ngIf="!data" class="jumbotron text-center">
+  <h1>Load your file</h1>
+  <p>Please select the .xlsx file to load</p>
+  <input class="text-center" type="file" (change)="onFileChange($event)" multiple="false" />
+</div>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" >WebSiteName</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a (click)="loadFile()">Load File</a></li>
+        <li><a (click)="exportFile()">Export File</a></li>
+        <li style="position: absolute;right: 0;"><a (click)="logOut()">LogOut</a></li>
+      </ul>
+    </div>
+  </nav>
+<!-- <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <form class="form-inline" action="/action_page.php">
+    <input class="form-control mr-sm-2" type="text" placeholder="Search">
+    <button class="btn btn-success" type="submit">Search</button>
+  </form>
+</nav> -->
+<div *ngIf="data" class="row col-lg-12">
+  <div class="col-lg-3">
+    <ul class="nav nav-tabs">
+      <li [ngClass]="{'active': tab==='users'}" id="tabUsers">
+        <a (click)="loadTab('users')">
+          <fa name="users"></fa> Users</a>
+      </li>
+      <li (mouseenter) ="mouseEnter('div a') "  (mouseleave) ="mouseLeave('div A')" [ngClass]="{'active': tab==='filter'}" id="tabFilter" class="active">
+          <button [hidden]="!filterHover" id="resetFilter" class="btn-danger btn-logout" ng-click="resetFilter()"><fa name="filter"></fa></button>
+        <a (click)="loadTab('filter')">Filter
+          <fa name="filter"></fa>
+        </a>
+      </li>
+    </ul>
+    <table *ngIf="tab==='users'" class="table table-bordered">
+      <tr *ngFor="let row of data_temp">
+        <td (click)=selectItem(row)><span ></span>#{{$index}}/{{row.last_name}}, {{row.name}} </td>
+        <!-- <td *ngFor="let val of row">
+                  {{val[0]}}
+              </td> -->
+      </tr>
+    </table>
+    <div *ngIf="tab==='filter'" class="row col-lg-12">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input [(ngModel)]="filter.name" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control" id="name">
+      </div>
+      <div class="form-group">
+        <label for="lastname">LastName:</label>
+        <input [(ngModel)]="filter.lastname" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control" id="lastname">
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input [(ngModel)]="filter.email" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control" id="email">
+      </div>
+      <div class="form-group">
+        <label for="usr">FT Status:</label>
+        <select [(ngModel)]="filter.ft_status" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control" id="ft_status">
+          <option *ngFor="let ft_status of selectFilters.ft_status" [value]="ft_status">{{ft_status}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Citizenship:</label>
+        <select [(ngModel)]="filter.citizenship" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="citizenship">
+          <option *ngFor="let citizenship of selectFilters.citizenship" [value]="citizenship">{{citizenship}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Last position pre MBA:</label>
+        <select [(ngModel)]="filter.last_position_pre_MBA" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="last_position_pre_MBA">
+          <option *ngFor="let last_position_pre_MBA of selectFilters.last_position_pre_MBA" [value]="last_position_pre_MBA">{{last_position_pre_MBA}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Last sector pre MBA:</label>
+        <select [(ngModel)]="filter.last_sector_pre_MBA" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="last_sector_pre_MBA">
+          <option *ngFor="let last_sector_pre_MBA of selectFilters.last_sector_pre_MBA" [value]="last_sector_pre_MBA">{{last_sector_pre_MBA}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Company Area pre MBA:</label>
+        <select [(ngModel)]="filter.company_area_pre_MBA" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="company_area_pre_MBA">
+          <option *ngFor="let company_area_pre_MBA of selectFilters.company_area_pre_MBA" [value]="company_area_pre_MBA">{{company_area_pre_MBA}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Experience pre MBA:</label>
+        <select [(ngModel)]="filter.experience_pre_MBA" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="experience_pre_MBA">
+          <option *ngFor="let experience_pre_MBA of selectFilters.experience_pre_MBA" [value]="experience_pre_MBA">{{experience_pre_MBA}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Month track MBA:</label>
+        <select [(ngModel)]="filter.trackMBA" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="trackMBA">
+          <option *ngFor="let trackMBA of selectFilters.trackMBA" [value]="trackMBA">{{trackMBA}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="usr">Seach Area?:</label>
+        <select [(ngModel)]="filter.search_area" (ngModelChange)="filterData()" #ctrl="ngModel" type="text" class="form-control"
+          id="search_area">
+          <option *ngFor="let search_area of selectFilters.search_area" [value]="search_area">{{search_area}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-9">
+    <app-card [item]="itemSelected"></app-card>
+  </div>
+</div>
+
+<!-- 
+  <table *ngIf="data" class="table table-bordered">
+      <tr *ngFor="let row of data">
+        <td *ngFor="let val of row">
+          {{val}}
+        </td>
+      </tr>
+    </table> -->
